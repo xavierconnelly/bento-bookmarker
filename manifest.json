@@ -3,9 +3,14 @@
   "name": "Life Bento Bookmarker",
   "version": "1.0",
   "description": "Save tabs for Life Bento",
-  "permissions": ["tabs", "storage", "windows"],
+  "permissions": ["tabs", "storage", "windows", "sidePanel"],
   "action": {
-    "default_popup": "popup.html",
     "default_title": "Life Bento Bookmarker"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js"
   }
 }
