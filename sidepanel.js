@@ -1,15 +1,13 @@
-// ── Storage helpers ──────────────────────────────────────────────
+// ── Storage ──────────────────────────────────────────────────────
 
 function getBookmarks() {
-  return new Promise(resolve => {
-    chrome.storage.local.get('bookmarks', ({ bookmarks = [] }) => resolve(bookmarks));
-  });
+  return new Promise(resolve =>
+    chrome.storage.local.get('bookmarks', ({ bookmarks = [] }) => resolve(bookmarks))
+  );
 }
 
 function setBookmarks(bookmarks) {
-  return new Promise(resolve => {
-    chrome.storage.local.set({ bookmarks }, resolve);
-  });
+  return new Promise(resolve => chrome.storage.local.set({ bookmarks }, resolve));
 }
 
 // ── Tab helpers ──────────────────────────────────────────────────
@@ -22,6 +20,7 @@ function tabToBookmark(tab, source = 'single') {
     favicon: tab.favIconUrl || '',
     savedAt: Date.now(),
     source,
+    pile: null, // null = unsorted
   };
 }
 
@@ -37,10 +36,6 @@ function isCaptureable(tab) {
     !tab.url.startsWith('about:');
 }
 
-// ── State ────────────────────────────────────────────────────────
-
-let activeFilter = 'all';
-
 // ── UI helpers ───────────────────────────────────────────────────
 
 function showToast(msg) {
@@ -51,84 +46,111 @@ function showToast(msg) {
 }
 
 function formatUrl(url) {
-  try {
-    const u = new URL(url);
-    return u.hostname.replace(/^www\./, '');
-  } catch {
-    return url;
-  }
+  try { return new URL(url).hostname.replace(/^www\./, ''); }
+  catch { return url; }
+}
+
+// ── Render ───────────────────────────────────────────────────────
+
+function updateZoneCounts(bookmarks) {
+  const piles = ['inbox', 'inspo', 'tasks', 'read', 'japan', 'discard'];
+  piles.forEach(pile => {
+    const count = bookmarks.filter(b => b.pile === pile).length;
+    const el = document.getElementById(`zone-count-${pile}`);
+    if (el) el.textContent = `${count} item${count !== 1 ? 's' : ''}`;
+  });
 }
 
 function render(bookmarks) {
   const list = document.getElementById('bookmark-list');
   const badge = document.getElementById('count-badge');
-  const label = document.getElementById('list-label');
 
   badge.textContent = `${bookmarks.length} saved`;
+  updateZoneCounts(bookmarks);
 
-  // Apply filter
-  const filterMap = { 'all': null, 'single': 'single', 'window': 'window', 'all-windows': 'all' };
-  const filterValue = filterMap[activeFilter];
-  const filtered = filterValue ? bookmarks.filter(b => b.source === filterValue) : bookmarks;
+  // Only show unsorted in the list
+  const unsorted = bookmarks.filter(b => !b.pile).sort((a, b) => b.savedAt - a.savedAt);
 
-  const filterNames = { all: 'All', single: 'Single', window: 'Window', 'all-windows': 'All windows' };
-  label.textContent = filterNames[activeFilter] || 'Saved';
-
-  if (filtered.length === 0) {
+  if (unsorted.length === 0) {
+    const allSorted = bookmarks.length > 0 && bookmarks.every(b => b.pile);
     list.innerHTML = `<div class="empty-state">
-      <strong>${bookmarks.length === 0 ? 'Nothing saved yet' : 'No matches'}</strong>
-      ${bookmarks.length === 0 ? 'Capture a tab above to get started.' : 'Try a different filter.'}
+      <strong>${bookmarks.length === 0 ? 'Nothing saved yet' : 'All sorted ✓'}</strong>
+      ${bookmarks.length === 0
+        ? 'Capture a tab above to get started.'
+        : 'Drag items from above into the piles to triage.'}
     </div>`;
     return;
   }
 
-  const sorted = [...filtered].sort((a, b) => b.savedAt - a.savedAt);
-
-  list.innerHTML = sorted.map(b => {
-    const tagClass = b.source === 'window' ? 'bulk' : b.source === 'all' ? 'all' : '';
-    const tagLabel = b.source === 'window' ? 'window' : b.source === 'all' ? 'all windows' : '';
-
-    return `
-      <div class="bookmark-item">
-        ${b.favicon
-          ? `<img class="bookmark-favicon" src="${b.favicon}" alt="" onerror="this.style.display='none'" />`
-          : `<div class="bookmark-favicon"></div>`
-        }
-        <div class="bookmark-info">
-          <a class="bookmark-title" href="${b.url}" target="_blank" title="${b.title}">${b.title}</a>
-          <div class="bookmark-url">${formatUrl(b.url)}</div>
-        </div>
-        ${tagLabel ? `<span class="bookmark-tag ${tagClass}">${tagLabel}</span>` : ''}
-        <button class="remove-btn" data-id="${b.id}" title="Remove">×</button>
+  list.innerHTML = unsorted.map(b => `
+    <div class="bookmark-item" draggable="true" data-id="${b.id}">
+      ${b.favicon
+        ? `<img class="bookmark-favicon" src="${b.favicon}" alt="" onerror="this.style.display='none'" />`
+        : `<div class="bookmark-favicon"></div>`
+      }
+      <div class="bookmark-info">
+        <a class="bookmark-title" href="${b.url}" target="_blank" title="${b.title}">${b.title}</a>
+        <div class="bookmark-url">${formatUrl(b.url)}</div>
       </div>
-    `;
-  }).join('');
+      <button class="remove-btn" data-id="${b.id}" title="Remove">×</button>
+    </div>
+  `).join('');
 
+  // Drag from list
+  list.querySelectorAll('.bookmark-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('bookmarkId', item.dataset.id);
+      item.classList.add('dragging');
+    });
+    item.addEventListener('dragend', () => item.classList.remove('dragging'));
+  });
+
+  // Remove buttons
   list.querySelectorAll('.remove-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
+    btn.addEventListener('click', async e => {
       e.preventDefault();
-      const id = btn.dataset.id;
       const current = await getBookmarks();
-      const updated = current.filter(b => b.id !== id);
+      const updated = current.filter(b => b.id !== btn.dataset.id);
       await setBookmarks(updated);
       render(updated);
     });
   });
 }
 
-// ── Tab counts ───────────────────────────────────────────────────
+// ── Drop zones ───────────────────────────────────────────────────
 
-async function updateCounts() {
-  const currentWindow = await chrome.windows.getCurrent({ populate: true });
-  const windowTabs = currentWindow.tabs.filter(isCaptureable);
-  document.getElementById('window-count').textContent = `${windowTabs.length} tabs`;
+document.querySelectorAll('.drop-zone').forEach(zone => {
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    zone.classList.add('drag-over');
+  });
 
-  const allWindows = await chrome.windows.getAll({ populate: true });
-  const allTabs = allWindows.flatMap(w => w.tabs).filter(isCaptureable);
-  document.getElementById('all-count').textContent = `${allTabs.length} tabs`;
-}
+  zone.addEventListener('dragleave', e => {
+    // Only remove if leaving the zone entirely (not a child element)
+    if (!zone.contains(e.relatedTarget)) {
+      zone.classList.remove('drag-over');
+    }
+  });
 
-// ── Capture actions ──────────────────────────────────────────────
+  zone.addEventListener('drop', async e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+
+    const id = e.dataTransfer.getData('bookmarkId');
+    if (!id) return;
+
+    const pile = zone.dataset.pile;
+    const current = await getBookmarks();
+    const updated = current.map(b => b.id === id ? { ...b, pile } : b);
+    await setBookmarks(updated);
+    render(updated);
+
+    const pileName = zone.querySelector('.zone-name').textContent;
+    showToast(`Moved to ${pileName}`);
+  });
+});
+
+// ── Capture buttons ──────────────────────────────────────────────
 
 document.getElementById('btn-save-one').addEventListener('click', async () => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -145,10 +167,10 @@ document.getElementById('btn-save-one').addEventListener('click', async () => {
 document.getElementById('btn-save-window').addEventListener('click', async () => {
   const currentWindow = await chrome.windows.getCurrent({ populate: true });
   const tabs = currentWindow.tabs.filter(isCaptureable);
-  if (tabs.length === 0) { showToast('No capturable tabs in this window'); return; }
+  if (!tabs.length) { showToast('No capturable tabs in this window'); return; }
   const current = await getBookmarks();
   const newOnes = dedup(tabs.map(t => tabToBookmark(t, 'window')), current);
-  if (newOnes.length === 0) { showToast('All tabs already saved'); return; }
+  if (!newOnes.length) { showToast('All tabs already saved'); return; }
   const updated = [...current, ...newOnes];
   await setBookmarks(updated);
   render(updated);
@@ -158,10 +180,10 @@ document.getElementById('btn-save-window').addEventListener('click', async () =>
 document.getElementById('btn-save-all').addEventListener('click', async () => {
   const allWindows = await chrome.windows.getAll({ populate: true });
   const tabs = allWindows.flatMap(w => w.tabs).filter(isCaptureable);
-  if (tabs.length === 0) { showToast('No capturable tabs found'); return; }
+  if (!tabs.length) { showToast('No capturable tabs found'); return; }
   const current = await getBookmarks();
   const newOnes = dedup(tabs.map(t => tabToBookmark(t, 'all')), current);
-  if (newOnes.length === 0) { showToast('All tabs already saved'); return; }
+  if (!newOnes.length) { showToast('All tabs already saved'); return; }
   const updated = [...current, ...newOnes];
   await setBookmarks(updated);
   render(updated);
@@ -174,22 +196,13 @@ document.getElementById('btn-clear').addEventListener('click', async () => {
   showToast('Cleared');
 });
 
-// ── Filter tabs ──────────────────────────────────────────────────
-
-document.querySelectorAll('.filter-tab').forEach(tab => {
-  tab.addEventListener('click', async () => {
-    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    activeFilter = tab.dataset.filter;
-    const bookmarks = await getBookmarks();
-    render(bookmarks);
-  });
-});
+// ── Tab counts on buttons ─────────────────────────────────────────
+// (No visible meta text on buttons now, but keeping updateCounts
+//  available for future use)
 
 // ── Init ─────────────────────────────────────────────────────────
 
 (async () => {
   const bookmarks = await getBookmarks();
   render(bookmarks);
-  updateCounts();
 })();

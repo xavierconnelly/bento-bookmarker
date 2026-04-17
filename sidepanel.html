@@ -20,19 +20,11 @@
       --accent-dim: rgba(124, 92, 191, 0.08);
       --accent-border: rgba(124, 92, 191, 0.2);
       --danger: #C0392B;
-      --tag-window-text: #1D6FA4;
-      --tag-window-bg: rgba(29, 111, 164, 0.07);
-      --tag-window-border: rgba(29, 111, 164, 0.18);
-      --tag-all-text: #7C5CBF;
-      --tag-all-bg: rgba(124, 92, 191, 0.07);
-      --tag-all-border: rgba(124, 92, 191, 0.18);
       --radius: 8px;
       --font: 'DM Mono', 'Fira Mono', 'Courier New', monospace;
     }
 
-    html, body {
-      height: 100%;
-    }
+    html, body { height: 100%; }
 
     body {
       background: var(--bg);
@@ -53,45 +45,26 @@
       align-items: center;
       justify-content: space-between;
       flex-shrink: 0;
-      background: var(--bg);
     }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .logo { display: flex; align-items: center; gap: 8px; }
     .logo-mark {
-      width: 20px;
-      height: 20px;
+      width: 20px; height: 20px;
       background: var(--accent);
       border-radius: 4px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
-      gap: 2px;
-      padding: 3px;
+      gap: 2px; padding: 3px;
     }
-    .logo-mark span {
-      background: var(--bg);
-      border-radius: 1px;
-      display: block;
-    }
-    .logo-text {
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
+    .logo-mark span { background: var(--bg); border-radius: 1px; display: block; }
+    .logo-text { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
     .count-badge {
-      font-size: 10px;
-      color: var(--text-muted);
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 2px 8px;
+      font-size: 10px; color: var(--text-muted);
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2px 8px;
     }
 
-    /* ── Capture section ── */
+    /* ── Capture ── */
     .capture-section {
       padding: 12px 16px;
       border-bottom: 1px solid var(--border);
@@ -100,7 +73,6 @@
       gap: 6px;
       flex-shrink: 0;
     }
-
     .section-label {
       font-size: 9px;
       letter-spacing: 0.12em;
@@ -108,88 +80,77 @@
       color: var(--text-muted);
       margin-bottom: 2px;
     }
-
+    .btn-row { display: flex; gap: 6px; }
     .btn {
-      width: 100%;
-      padding: 8px 12px;
+      flex: 1;
+      padding: 8px 6px;
       border-radius: var(--radius);
       border: 1px solid var(--border);
       background: var(--bg);
       color: var(--text-mid);
       font-family: var(--font);
-      font-size: 11.5px;
+      font-size: 10.5px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 5px;
       transition: background 0.12s, border-color 0.12s;
-      text-align: left;
+      white-space: nowrap;
     }
-    .btn:hover {
-      background: var(--surface);
-      border-color: #CFC9C9;
-    }
-    .btn:active {
-      background: var(--surface-2);
-    }
+    .btn:hover { background: var(--surface); border-color: #CFC9C9; }
+    .btn:active { background: var(--surface-2); }
     .btn.primary {
       background: var(--accent-dim);
       border-color: var(--accent-border);
       color: var(--accent);
     }
-    .btn.primary:hover {
-      background: rgba(124, 92, 191, 0.12);
-      border-color: rgba(124, 92, 191, 0.3);
-    }
-    .btn-icon {
-      width: 15px;
-      height: 15px;
-      flex-shrink: 0;
-      opacity: 0.6;
-    }
-    .btn.primary .btn-icon { opacity: 0.8; }
-    .btn-text { flex: 1; }
-    .btn-meta {
-      font-size: 10px;
-      color: var(--text-muted);
-      flex-shrink: 0;
-    }
+    .btn.primary:hover { background: rgba(124,92,191,0.12); border-color: rgba(124,92,191,0.3); }
+    .btn-icon { width: 13px; height: 13px; flex-shrink: 0; opacity: 0.55; }
+    .btn.primary .btn-icon { opacity: 0.85; }
 
-    /* ── Filter tabs ── */
-    .filter-bar {
-      padding: 8px 16px 0;
-      display: flex;
-      gap: 4px;
-      flex-shrink: 0;
+    /* ── Drop zones ── */
+    .zones-section {
+      padding: 12px 16px;
       border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
     }
-    .filter-tab {
-      font-size: 10px;
-      font-family: var(--font);
-      padding: 5px 10px 7px;
-      border: none;
-      background: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      letter-spacing: 0.04em;
-      transition: color 0.12s;
+    .zones-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
     }
-    .filter-tab:hover { color: var(--text-mid); }
-    .filter-tab.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
+    .drop-zone {
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 9px 10px 8px;
+      transition: border-color 0.15s, background 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      min-height: 50px;
+      user-select: none;
     }
+    .drop-zone.drag-over {
+      border-color: var(--zone-color) !important;
+      background: var(--zone-bg) !important;
+      border-style: solid;
+    }
+    .zone-icon { font-size: 12px; line-height: 1; }
+    .zone-name { font-size: 10px; letter-spacing: 0.05em; color: var(--text-mid); }
+    .zone-count { font-size: 9px; color: var(--text-muted); }
 
-    /* ── Bookmarks list ── */
-    .list-section {
-      flex: 1;
-      overflow-y: auto;
-      min-height: 0;
-    }
+    [data-pile="inbox"]   { --zone-color: #7C5CBF; --zone-bg: rgba(124,92,191,0.06); }
+    [data-pile="inspo"]   { --zone-color: #D97706; --zone-bg: rgba(217,119,6,0.06); }
+    [data-pile="tasks"]   { --zone-color: #059669; --zone-bg: rgba(5,150,105,0.06); }
+    [data-pile="read"]    { --zone-color: #1D6FA4; --zone-bg: rgba(29,111,164,0.06); }
+    [data-pile="japan"]   { --zone-color: #DC2626; --zone-bg: rgba(220,38,38,0.06); }
+    [data-pile="discard"] { --zone-color: #9A8E8E; --zone-bg: rgba(154,142,142,0.06); }
+
+    /* ── Saved list ── */
+    .list-section { flex: 1; overflow-y: auto; min-height: 0; }
     .list-section::-webkit-scrollbar { width: 4px; }
-    .list-section::-webkit-scrollbar-track { background: transparent; }
     .list-section::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
     .list-header {
@@ -197,39 +158,24 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
+      position: sticky; top: 0;
       background: var(--bg);
       border-bottom: 1px solid var(--border-soft);
       z-index: 1;
     }
-
     .clear-btn {
-      font-size: 10px;
-      color: var(--text-muted);
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-family: var(--font);
-      padding: 2px 4px;
-      border-radius: 4px;
+      font-size: 10px; color: var(--text-muted);
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); padding: 2px 4px; border-radius: 4px;
       transition: color 0.1s;
     }
     .clear-btn:hover { color: var(--danger); }
 
     .empty-state {
-      padding: 32px 20px;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 11px;
-      line-height: 1.7;
+      padding: 28px 20px; text-align: center;
+      color: var(--text-muted); font-size: 11px; line-height: 1.7;
     }
-    .empty-state strong {
-      display: block;
-      color: var(--text-mid);
-      margin-bottom: 4px;
-      font-weight: 500;
-    }
+    .empty-state strong { display: block; color: var(--text-mid); margin-bottom: 4px; }
 
     .bookmark-item {
       padding: 9px 16px;
@@ -238,110 +184,54 @@
       align-items: flex-start;
       gap: 9px;
       transition: background 0.1s;
+      cursor: grab;
     }
     .bookmark-item:hover { background: var(--surface); }
     .bookmark-item:last-child { border-bottom: none; }
+    .bookmark-item.dragging { opacity: 0.4; }
 
     .bookmark-favicon {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-      margin-top: 1px;
-      border-radius: 2px;
-      background: var(--surface-2);
+      width: 14px; height: 14px; flex-shrink: 0;
+      margin-top: 1px; border-radius: 2px; background: var(--surface-2);
     }
-
-    .bookmark-info {
-      flex: 1;
-      min-width: 0;
-    }
+    .bookmark-info { flex: 1; min-width: 0; }
     .bookmark-title {
-      color: var(--text);
-      text-decoration: none;
-      font-size: 11.5px;
-      line-height: 1.4;
-      display: block;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      color: var(--text); text-decoration: none;
+      font-size: 11.5px; line-height: 1.4; display: block;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .bookmark-title:hover { color: var(--accent); }
     .bookmark-url {
-      font-size: 10px;
-      color: var(--text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: 2px;
+      font-size: 10px; color: var(--text-muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;
     }
-
-    .bookmark-tag {
-      font-size: 9px;
-      padding: 1px 5px;
-      border-radius: 3px;
-      color: var(--text-muted);
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      flex-shrink: 0;
-      margin-top: 2px;
-      letter-spacing: 0.04em;
-    }
-    .bookmark-tag.bulk {
-      color: var(--tag-window-text);
-      background: var(--tag-window-bg);
-      border-color: var(--tag-window-border);
-    }
-    .bookmark-tag.all {
-      color: var(--tag-all-text);
-      background: var(--tag-all-bg);
-      border-color: var(--tag-all-border);
-    }
-
     .remove-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 15px;
-      line-height: 1;
-      padding: 0 2px;
-      flex-shrink: 0;
-      opacity: 0;
-      transition: opacity 0.1s, color 0.1s;
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 15px; line-height: 1;
+      padding: 0 2px; flex-shrink: 0;
+      opacity: 0; transition: opacity 0.1s, color 0.1s;
     }
     .bookmark-item:hover .remove-btn { opacity: 1; }
     .remove-btn:hover { color: var(--danger); }
 
     /* ── Toast ── */
     .toast {
-      position: fixed;
-      bottom: 14px;
-      left: 50%;
+      position: fixed; bottom: 14px; left: 50%;
       transform: translateX(-50%) translateY(8px);
-      background: var(--text);
-      color: var(--bg);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 11px;
-      opacity: 0;
-      pointer-events: none;
+      background: var(--text); color: var(--bg);
+      padding: 6px 14px; border-radius: 20px; font-size: 11px;
+      opacity: 0; pointer-events: none;
       transition: opacity 0.18s, transform 0.18s;
-      white-space: nowrap;
-      z-index: 100;
+      white-space: nowrap; z-index: 100;
     }
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
 
   <div class="header">
     <div class="logo">
-      <div class="logo-mark">
-        <span></span><span></span><span></span><span></span>
-      </div>
+      <div class="logo-mark"><span></span><span></span><span></span><span></span></div>
       <span class="logo-text">Life Bento</span>
     </div>
     <span class="count-badge" id="count-badge">0 saved</span>
@@ -349,52 +239,77 @@
 
   <div class="capture-section">
     <div class="section-label">Capture</div>
-
-    <button class="btn primary" id="btn-save-one">
-      <svg class="btn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="2" y="2" width="12" height="10" rx="1.5"/>
-        <path d="M5 14h6M8 12v2"/>
-      </svg>
-      <span class="btn-text">Save this tab</span>
-    </button>
-
-    <button class="btn" id="btn-save-window">
-      <svg class="btn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="1" y="3" width="14" height="10" rx="1.5"/>
-        <path d="M1 6h14M5 6v7M10 6v7"/>
-      </svg>
-      <span class="btn-text">Save all — this window</span>
-      <span class="btn-meta" id="window-count"></span>
-    </button>
-
-    <button class="btn" id="btn-save-all">
-      <svg class="btn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="1" y="5" width="12" height="9" rx="1.5"/>
-        <rect x="3" y="3" width="12" height="9" rx="1.5" opacity="0.35"/>
-        <rect x="5" y="1" width="10" height="9" rx="1.5" opacity="0.15"/>
-      </svg>
-      <span class="btn-text">Save all — all windows</span>
-      <span class="btn-meta" id="all-count"></span>
-    </button>
+    <div class="btn-row">
+      <button class="btn primary" id="btn-save-one">
+        <svg class="btn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="2" width="12" height="10" rx="1.5"/>
+          <path d="M5 14h6M8 12v2"/>
+        </svg>
+        Save tab
+      </button>
+      <button class="btn" id="btn-save-window">
+        <svg class="btn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="1" y="3" width="14" height="10" rx="1.5"/>
+          <path d="M1 6h14M5 6v7M10 6v7"/>
+        </svg>
+        This window
+      </button>
+      <button class="btn" id="btn-save-all">
+        <svg class="btn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="1" y="5" width="12" height="9" rx="1.5"/>
+          <rect x="3" y="3" width="12" height="9" rx="1.5" opacity="0.35"/>
+          <rect x="5" y="1" width="10" height="9" rx="1.5" opacity="0.15"/>
+        </svg>
+        All windows
+      </button>
+    </div>
   </div>
 
-  <div class="filter-bar">
-    <button class="filter-tab active" data-filter="all">All</button>
-    <button class="filter-tab" data-filter="single">Single</button>
-    <button class="filter-tab" data-filter="window">Window</button>
-    <button class="filter-tab" data-filter="all-windows">All windows</button>
+  <div class="zones-section">
+    <div class="section-label" style="margin-bottom:8px">Sort into</div>
+    <div class="zones-grid">
+      <div class="drop-zone" data-pile="inbox">
+        <span class="zone-icon">📥</span>
+        <span class="zone-name">Inbox</span>
+        <span class="zone-count" id="zone-count-inbox">0 items</span>
+      </div>
+      <div class="drop-zone" data-pile="inspo">
+        <span class="zone-icon">✦</span>
+        <span class="zone-name">Inspo</span>
+        <span class="zone-count" id="zone-count-inspo">0 items</span>
+      </div>
+      <div class="drop-zone" data-pile="tasks">
+        <span class="zone-icon">◎</span>
+        <span class="zone-name">Tasks</span>
+        <span class="zone-count" id="zone-count-tasks">0 items</span>
+      </div>
+      <div class="drop-zone" data-pile="read">
+        <span class="zone-icon">▤</span>
+        <span class="zone-name">Read later</span>
+        <span class="zone-count" id="zone-count-read">0 items</span>
+      </div>
+      <div class="drop-zone" data-pile="japan">
+        <span class="zone-icon">◈</span>
+        <span class="zone-name">Japan</span>
+        <span class="zone-count" id="zone-count-japan">0 items</span>
+      </div>
+      <div class="drop-zone" data-pile="discard">
+        <span class="zone-icon">×</span>
+        <span class="zone-name">Discard</span>
+        <span class="zone-count" id="zone-count-discard">0 items</span>
+      </div>
+    </div>
   </div>
 
   <div class="list-section">
     <div class="list-header">
-      <span class="section-label" style="margin:0" id="list-label">Saved</span>
+      <span class="section-label" style="margin:0">Unsorted</span>
       <button class="clear-btn" id="btn-clear">clear all</button>
     </div>
     <div id="bookmark-list"></div>
   </div>
 
   <div class="toast" id="toast"></div>
-
   <script src="sidepanel.js"></script>
 </body>
 </html>
