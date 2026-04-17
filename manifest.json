@@ -3,9 +3,9 @@
   "name": "Life Bento Bookmarker",
   "version": "1.0",
   "description": "Save tabs for Life Bento",
-  "permissions": ["tabs", "storage"],
+  "permissions": ["tabs", "storage", "windows"],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Bookmark this tab"
+    "default_title": "Life Bento Bookmarker"
   }
 }
